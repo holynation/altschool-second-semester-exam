@@ -2,6 +2,18 @@
 
 This document outlines the detailed process used to create and configure an AWS account for deploying a professional-grade dynamic prototype web application, suitable for technical showcases to potential investors.
 
+## 📚 Table of Contents
+
+- [1. Project Context](#1-project-context)
+- [2. AWS Account Creation](#2-aws-account-creation)
+- [3. IAM User and Group Setup](#3-iam-user-and-group-setup)
+- [4. Setting Up Billing Alerts and Budgets](#4-setting-up-billing-alerts-and-budgets)
+- [5. Provisioning an AWS EC2 Server](#5-provisioning-an-aws-ec2-server)
+- [Additional: Testing the Apache2 Web Server (Optional)](#additional-testing-the-apache2-web-server-optional)
+- [Upload a Custom HTML File to Apache](#upload-a-custom-html-file-to-apache)
+- [Screenshots](#screenshots)
+
+
 ---
 
 ## 1. Project Context
@@ -32,6 +44,8 @@ To enhance account security, Multi-Factor Authentication (MFA) was enabled on th
 7. Successfully enabled MFA for the root user.
 
 This ensures the root account is secured with an extra layer of authentication beyond the password.
+
+[🔝 Back to Top](#📚-table-of-contents)
 
 ## 3. IAM User and Group Setup
 
@@ -68,6 +82,8 @@ After the user was created:
     - Entered two time-based codes from the app to complete setup
 
 > Additional Note: The IAM interface provides options to explore Groups, Tags, and Permissions. These can be used to refine access, organize users, and manage permissions according to best practices like **least privilege**.
+
+[🔝 Back to Top](#📚-table-of-contents)
 
 
 ## 4. Setting Up Billing Alerts and Budgets
@@ -125,6 +141,9 @@ To prevent unexpected charges and stay within your AWS budget, it's essential to
    - Ensure the **alarm state is "OK"** and **"Actions enabled"** is displayed.
 
    ✅ This confirms that your billing alarm is now active and properly configured.
+   
+
+[🔝 Back to Top](#📚-table-of-contents)
 
 ## 5. Provisioning an AWS EC2 Server
 
@@ -238,7 +257,10 @@ Run the following commands:
 Got it! Here's your updated **Section 4: Testing the Apache2 Web Server** in proper **Markdown format** with your latest instructions included:
 
 
-## **Additional: Testing the Apache2 Web Server (Optional)**
+[🔝 Back to Top](#📚-table-of-contents)
+
+
+## Additional: Testing the Apache2 Web Server (Optional)
 
 After installing and starting the Apache2 service, it's important to verify whether it is serving content correctly.
 
@@ -314,7 +336,9 @@ You should see either:
     
 ----------
 
-## 📁 Upload a Custom HTML File to Apache
+[🔝 Back to Top](#📚-table-of-contents)
+
+## Upload a Custom HTML File to Apache
 
 Here's how to upload your own HTML file to the Apache2 web root:
 
@@ -351,9 +375,25 @@ Visit `http://<your-public-ip>` in your browser - you should now see your custom
 
 **Hurray!** You're now serving your own HTML content from an EC2 instance using Apache2!
 
+[🔝 Back to Top](#📚-table-of-contents)
 
-### Screenshots
+
+## Screenshots
 ![Landing Page Screenshot](images/1.png)
-<img src="images/1.png" alt="Hero Page" width="600">
+
+<img src="images/2.png" alt="Hero Page" width="800">
+<img src="images/3.png" alt="Hero Page" width="800">
+<img src="images/4.png" alt="Hero Page" width="800">
+<img src="images/5.png" alt="Hero Page" width="800">
+<img src="images/6.png" alt="Hero Page" width="800">
+
+
+---
+
+© 2025 Oluwaseun Alatise. All rights reserved.
+Crafted with ❤️ for learning and deployment on AWS.
+
+[🔝 Back to Top](#📚-table-of-contents)
+
 
 
