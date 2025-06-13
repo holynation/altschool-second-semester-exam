@@ -84,7 +84,7 @@ After the user was created:
 
 > Additional Note: The IAM interface provides options to explore Groups, Tags, and Permissions. These can be used to refine access, organize users, and manage permissions according to best practices like **least privilege**.
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 
 ## 4. Setting Up Billing Alerts and Budgets
@@ -144,7 +144,7 @@ To prevent unexpected charges and stay within your AWS budget, it's essential to
    ✅ This confirms that your billing alarm is now active and properly configured.
    
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 ## 5. Provisioning an AWS EC2 Server
 
@@ -258,7 +258,7 @@ Run the following commands:
 Got it! Here's your updated **Section 4: Testing the Apache2 Web Server** in proper **Markdown format** with your latest instructions included:
 
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 
 ## Additional: Testing the Apache2 Web Server (Optional)
@@ -337,7 +337,7 @@ You should see either:
     
 ----------
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 ## Upload a Custom HTML File to Apache
 
@@ -376,7 +376,7 @@ Visit `http://<your-public-ip>` in your browser - you should now see your custom
 
 **Hurray!** You're now serving your own HTML content from an EC2 instance using Apache2!
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 
 ## Screenshots
@@ -394,7 +394,7 @@ Visit `http://<your-public-ip>` in your browser - you should now see your custom
 © 2025 Oluwaseun Alatise. All rights reserved.
 Crafted with ❤️ for learning and deployment on AWS.
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 
 
