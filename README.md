@@ -30,6 +30,7 @@ Your startup team needs to create a dynamic prototype of a web application to sh
 - **MFA Enabled on Root Account:** Yes
 - **Public IP Adddress:** 34.224.221.167
 - **Github Link:** https://github.com/holynation/portfolio.git
+- **Deployment Script:** ![Deployment Script](deploy.sh)
 
 ### MFA Setup for Root User
 
