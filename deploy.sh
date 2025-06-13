@@ -4,7 +4,7 @@
 LOCAL_DIR="/path/to/your/local/site/"       # <-- change to your local site path
 REMOTE_USER="your-username"                 # <-- change to your SSH username
 REMOTE_HOST="your.server.com"               # <-- change to your server address
-REMOTE_DIR="/var/www/html/"                 # <-- change to your destination directory on the server. Ensure you have write permission to upload into this directory. # ON THE SERVER RUN
+REMOTE_DIR="/var/www/html/"                 # <-- change to your destination directory on the server. Ensure you have write permission to upload into this directory. ON THE SERVER RUN:
 # sudo chown -R your-username:www-data /var/www/html
 # sudo chmod -R 775 /var/www/html
 
@@ -12,7 +12,7 @@ REMOTE_DIR="/var/www/html/"                 # <-- change to your destination dir
 # whoami
 
 SSH_PORT=22                                 # <-- change this if your server uses a different SSH port
-SSH_KEY_PEM="/path/to/your/key-pair.pem"  # <-- change this to the location of your key-pair .pem file
+SSH_KEY_PEM="/path/to/your/key-pair.pem"    # <-- change this to the location of your key-pair .pem file
 
 EXCLUDES=(
   "--exclude=.git"

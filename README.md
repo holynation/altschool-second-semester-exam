@@ -2,7 +2,7 @@
 
 This document outlines the detailed process used to create and configure an AWS account for deploying a professional-grade dynamic prototype web application, suitable for technical showcases to potential investors.
 
-## 📚 Table of Contents
+## Table of Contents
 
 - [1. Project Context](#1-project-context)
 - [2. AWS Account Creation](#2-aws-account-creation)
@@ -46,7 +46,7 @@ To enhance account security, Multi-Factor Authentication (MFA) was enabled on th
 
 This ensures the root account is secured with an extra layer of authentication beyond the password.
 
-[🔝 Back to Top](#📚-table-of-contents)
+[🔝 Back to Top](#table-of-contents)
 
 ## 3. IAM User and Group Setup
 
