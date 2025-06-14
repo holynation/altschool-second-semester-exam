@@ -9,8 +9,8 @@ This document outlines the detailed process used to create and configure an AWS 
 - [3. IAM User and Group Setup](#3-iam-user-and-group-setup)
 - [4. Setting Up Billing Alerts and Budgets](#4-setting-up-billing-alerts-and-budgets)
 - [5. Provisioning an AWS EC2 Server](#5-provisioning-an-aws-ec2-server)
-- [6. Configure Apache Virtual Host for Your Domain](#configure-apache-virtual-host-for-your-domain)
-- [7. Secure Your Server with Let’s Encrypt SSL (Certbot)](#secure-your-server-with-lets-encrypt-ssl-certbot)
+- [6. Configure Apache Virtual Host for Your Domain](#6-configure-apache-virtual-host-for-your-domain)
+- [7. Secure Your Server with Let’s Encrypt SSL (Certbot)](#7-secure-your-server-with-lets-encrypt-ssl-certbot)
 - [Connect Domain (Namecheap) to AWS EC2](#connect-domain-namecheap-to-aws-ec2)
 - [Caution: Common HTTPS Setup Issues](#caution-common-https-setup-issues)
 - [Additional: Testing the Apache2 Web Server (Optional)](#additional-testing-the-apache2-web-server-optional)
@@ -417,6 +417,8 @@ Add this to your Apache config:
     Redirect permanent / https://yourdomain.com/
 </VirtualHost>
 ```
+
+[🔝 Back to Top](#table-of-contents)
 
 ## Connect Domain (Namecheap) to AWS EC2
 
