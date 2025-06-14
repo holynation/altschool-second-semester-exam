@@ -9,6 +9,10 @@ This document outlines the detailed process used to create and configure an AWS 
 - [3. IAM User and Group Setup](#3-iam-user-and-group-setup)
 - [4. Setting Up Billing Alerts and Budgets](#4-setting-up-billing-alerts-and-budgets)
 - [5. Provisioning an AWS EC2 Server](#5-provisioning-an-aws-ec2-server)
+- [6. Configure Apache Virtual Host for Your Domain](#configure-apache-virtual-host-for-your-domain)
+- [7. Secure Your Server with Let’s Encrypt SSL (Certbot)](#secure-your-server-with-lets-encrypt-ssl-certbot)
+- [Connect Domain (Namecheap) to AWS EC2](#connect-domain-namecheap-to-aws-ec2)
+- [Caution: Common HTTPS Setup Issues](#caution-common-https-setup-issues)
 - [Additional: Testing the Apache2 Web Server (Optional)](#additional-testing-the-apache2-web-server-optional)
 - [Upload a Custom HTML File to Apache](#upload-a-custom-html-file-to-apache)
 - [Screenshots](#screenshots)
@@ -26,9 +30,8 @@ Your startup team needs to create a dynamic prototype of a web application to sh
 
 - **Date Created:** 12/06/2025
 - **Registered Email:** holynation667@gmail.com
-- **AWS Account Alias:** Holynation
 - **MFA Enabled on Root Account:** Yes
-- **Public IP Adddress:** 34.224.221.167
+- **Public IP Adddress / Custom Domain:** 34.224.221.167 / https://oluwaseunalatise.online
 - **Github Link:** https://github.com/holynation/portfolio.git
 - **Deployment Script:** ![Deployment Script](deploy.sh)
 
@@ -207,9 +210,9 @@ To provision an EC2 server on AWS, follow these steps:
 
 Accept the prompt to continue. You’re now inside your EC2 instance.
 
-#### Step 7: Install Apache Web Server
+#### Step 7: Install Web Server (Apache or Nginx)
 
-Run the following commands:
+Our choice will be Apache: Run the following commands:
 
 1. Update package lists and install Apache:
    ```bash
@@ -261,11 +264,317 @@ Got it! Here's your updated **Section 4: Testing the Apache2 Web Server** in pro
 [🔝 Back to Top](#table-of-contents)
 
 
+## 6. Configure Apache Virtual Host for Your Domain
+
+> **Why?** Ensures Certbot can issue SSL certificates specifically for your domain (not just server IP)
+
+### 1. Create Site Directory
+```bash
+sudo mkdir -p /var/www/example.com/html
+```
+
+### 2. Set Permissions
+```bash
+sudo chown -R $USER:$USER /var/www/example.com/html
+```
+
+### 3. Add HTML Content
+```bash
+nano /var/www/example.com/html/index.html
+```
+Sample content:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Example.com</title>
+</head>
+<body>
+    <h1>Success! Your site is working</h1>
+</body>
+</html>
+```
+
+### 4. Create Virtual Host Config
+```bash
+sudo nano /etc/apache2/sites-available/example.com.conf
+```
+Copy the below and paste into your config created:
+```apache
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    ServerName example.com
+    ServerAlias www.example.com
+    DocumentRoot /var/www/example.com/html
+    
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+Replace `example.com` with your actual domain name.
+
+### 5. Enable Configuration
+```bash
+sudo a2ensite example.com.conf
+sudo a2dissite 000-default.conf  # Disable default site
+```
+
+### 6. Reload Apache
+```bash
+sudo systemctl reload apache2
+```
+
+### 7. Verify DNS Configuration
+- Ensure Namecheap A records point to your EC2 public IPv4
+- Check with:
+  ```bash
+  ping example.com
+  ```
+
+### Final Test
+Visit in browser:
+```
+http://example.com
+```
+
+> ⏳ DNS changes may take 5min-24hrs to propagate fully
+
+[🔝 Back to Top](#table-of-contents)
+
+
+## 7. Secure Your Server with Let’s Encrypt SSL (Certbot)
+
+> 🔒 **Goal**: Enable HTTPS using free SSL certificates from [Let's Encrypt](https://letsencrypt.org/)
+
+### Prerequisites
+- Domain pointing to EC2 IP (e.g., `example.com`). [Click here to point your domain](#connect-domain-namecheap-to-aws-ec2)
+- Your **security group** has port **443 (HTTPS)** and **80 (HTTP)** open (inbound rules).
+
+### Installation:
+
+#### 1. Install Snapd
+```bash
+sudo apt update && sudo apt install snapd -y
+```
+
+#### 2. Update Snap Core
+```bash
+sudo snap install core && sudo snap refresh core
+```
+
+#### 3. Remove Old Certbot
+```bash
+sudo apt remove certbot -y
+```
+
+#### 4. Install Certbot
+```bash
+sudo snap install --classic certbot
+```
+
+#### 5. Create Symlink
+```bash
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+
+### Request SSL Certificate:
+```bash
+sudo certbot --apache -d yourdomain.com -d www.yourdomain.com
+```
+Certbot will:
+- Detect Apache config
+- Ask for your email address (for renewal notices)
+-  Ask if you agree to the terms
+- Verify domain ownership and Install certificates
+-   Ask if you want to redirect HTTP to HTTPS (choose **yes** for redirection)
+- Reload Apache
+
+
+### Test Renewal (Optional):
+```bash
+sudo certbot renew --dry-run
+```
+Note: Certificates auto-renew every 90 days. Certbot installs a cron job automatically (or a systemd timer) to auto-renew your certificate. You don’t need to worry about it expiring.
+
+### Optional: Check the SSL with a Tool
+
+Use [ssllabs](https://www.ssllabs.com/ssltest/) to test your domain for SSL score and cert info.
+
+
+### Verification:
+Visit:  
+`https://yourdomain.com`  
+Should show secure lock icon (🔒)
+
+---
+
+### Bonus: Force HTTPS Redirect:
+Add this to your Apache config:
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    Redirect permanent / https://yourdomain.com/
+</VirtualHost>
+```
+
+## Connect Domain (Namecheap) to AWS EC2
+
+> **Goal**: Point your domain to your EC2 server for web access (HTTP/HTTPS).
+
+### Step 1: Get Your EC2 Public IP
+1. Go to **AWS Console** → **EC2 Dashboard**
+2. Select your instance
+3. Copy the **Public IPv4 address**  
+   (Example: `18.202.150.123`)
+
+### Step 2: Access Your Domain Registrar (Namecheap) DNS Settings
+1. Login to [Namecheap](https://namecheap.com)
+2. Go to **Domain List** → Click **Manage** on your domain
+3. Navigate to **Advanced DNS** tab
+
+### Step 3: Configure DNS Records
+Under **Host Records**, add/modify:
+
+| Type | Host | Value            | TTL       |
+|------|------|------------------|-----------|
+| A    | @    | `your.ec2.ip`    | Automatic |
+| A    | www  | `your.ec2.ip`    | Automatic |
+
+> Replace `your.ec2.ip` with your actual EC2 IP  
+> `@` = root domain (example.com), `www` = www.example.com
+
+### Step 4: Verify DNS Propagation
+1. Wait 5-30 minutes for changes to take effect
+2. Test with:
+   ```bash
+   ping yourdomain.com
+   ```
+
+
+[🔝 Back to Top](#table-of-contents)
+
+
+## Caution: Common HTTPS Setup Issues
+
+#### "My Site Won't Load Over HTTPS!"
+
+Don't panic! Here are the most common fixes you can try one after the other:
+
+#### Quick Checklist
+1. **Security Group Configuration**  
+   Verify port 443 (HTTPS) is open in EC2 Security Groups  
+   ```bash
+   nc -zv yourdomain.com 443  # Should say "succeeded"
+   ```
+
+	If it says otherwise or something went wrong, it probably mean your HTTPS is not properly configured, do the following to configure HTTPS
+
+	#### Configuration Steps:
+
+	1. **Navigate to Security Groups**:
+	   - AWS Console → EC2 Dashboard → Security Groups
+
+	2. **Edit Inbound Rules**:
+	   - Select your instance's security group
+	   - Go to **Inbound rules** tab → **Edit inbound rules**
+
+	3. **Add HTTPS Rule**:
+    
+	    -   **Type:** HTTPS
+        
+	    -   **Protocol:** TCP
+        
+	    -   **Port Range:** 443
+        
+	    -   **Source:** Anywhere (0.0.0.0/0, ::/0) — or restrict as needed.
+        
+	4. Click **Save rules**.
+
+
+2. **Virtual Host Activation**
+	```bash
+	sudo a2ensite yourdomain.com.conf
+	sudo systemctl reload apache2
+	```
+
+3. **File Path Verification**
+	```bash
+	ls -la /var/www/yourdomain.com/html/
+	# Should show index.html with correct permissions
+	```
+
+4. **SSL Certificate Check**
+	```bash
+	sudo ls /etc/letsencrypt/live/yourdomain.com/
+	# Should show cert.pem, privkey.pem, etc.
+	```
+
+5. **Permission Settings**
+	```bash
+	sudo chown -R $USER:$USER /var/www/yourdomain.com/
+	sudo chmod -R 755 /var/www/yourdomain.com/
+	```
+
+6. **Port Configuration**
+	```bash
+	sudo apache2ctl -S  # Verify VirtualHost loading
+	sudo ss -tulnp | grep ':443'  # Check 443 listening
+	```
+
+7. **Apache Syntax Check**
+	```bash
+	sudo apachectl configtest
+	# Must return "Syntax OK"
+	```
+
+---
+
+### Test Configuration:
+
+Try this minimal working config:
+
+```apache
+<VirtualHost *:80>
+    ServerName oluwaseunalatise.online
+    DocumentRoot /var/www/html
+    
+    <Directory /var/www/html>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+Then restart Apache:
+```bash
+sudo systemctl restart apache2
+```
+
+---
+
+### Log Analysis:
+```bash
+sudo tail -30 /var/log/apache2/{error,access}.log
+```
+
+---
+
+### Still Not Working?
+1. Try accessing via IP first: `http://<your-ec2-ip>`
+2. Check DNS propagation: `dig +short oluwaseunalatise.online`
+3. Verify Certbot installation: `sudo certbot certificates`
+
+[🔝 Back to Top](#table-of-contents)
+
+
+
 ## Additional: Testing the Apache2 Web Server (Optional)
 
 After installing and starting the Apache2 service, it's important to verify whether it is serving content correctly.
 
-### ✅ Confirm Apache2 Status
+### Confirm Apache2 Status
 
 Check the status of the Apache2 service to ensure it's running:
 
@@ -277,7 +586,7 @@ Look for something like `active (running)` in green text.
 
 ----------
 
-### 🌍 Get Your Public IP
+### Get Your Public IP
 
 To access your server from a browser, you need the public IP address of your EC2 instance. Run the command:
 
@@ -289,15 +598,13 @@ Alternatively, get it from your EC2 instance **Description** tab in the AWS Cons
 
 ----------
 
-### 🚫 Page Not Loading? Here's Why
+### Page Not Loading? Here's Why
 
 If you try accessing your server's IP in the browser right now (e.g., `http://<your-public-ip>`), **you'll notice that nothing loads**.
 
-**That's because of the Security Groups we set up earlier.**
+> **That's because of the Security Groups we set up earlier.**
 
-----------
-
-### 🔐 Update Your Security Group to Allow HTTP
+#### Update Your Security Group to Allow HTTP:
 
 Go back to your EC2 instance’s **Security Groups**:
 
@@ -323,9 +630,8 @@ Go back to your EC2 instance’s **Security Groups**:
 
 4. Click **Save rules**
 
-----------
 
-### ✅ Test Again in Browser
+#### Test Again in Browser:
 
 Now go back to your browser and refresh `http://<your-public-ip>`.
 
@@ -335,7 +641,6 @@ You should see either:
     
 -   If you uploaded an HTML file to `/var/www/html/`, you’ll see that file instead.
     
-----------
 
 [🔝 Back to Top](#table-of-contents)
 
@@ -387,7 +692,7 @@ Visit `http://<your-public-ip>` in your browser - you should now see your custom
 <img src="images/4.png" alt="Hero Page" width="800">
 <img src="images/5.png" alt="Hero Page" width="800">
 <img src="images/6.png" alt="Hero Page" width="800">
-
+<img src="images/7.png" alt="Hero Page" width="800">
 
 ---
 
@@ -395,6 +700,7 @@ Visit `http://<your-public-ip>` in your browser - you should now see your custom
 Crafted with ❤️ for learning and deployment on AWS.
 
 [🔝 Back to Top](#table-of-contents)
+
 
 
 
